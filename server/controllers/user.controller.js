@@ -1,6 +1,7 @@
 import express from 'express';
 import { User } from '../models/user.js';
 import { db } from '../app.js';
+import passport from 'passport';
 import {
   validateAndSaveIncommingData,
   validateAndUpdateNewData,
@@ -11,7 +12,7 @@ import { v4 as uuidv4 } from 'uuid';
 let router = express.Router();
 
 router
-  .get('/:userUuid', async (req, res) => {
+  .get('/:userUuid', passport.authenticate('local'), async (req, res) => {
     res.send(await findOne('users', req.params.userUuid));
   })
   .post('/', async (req, res) => {

@@ -9,6 +9,7 @@ const UserSchema = new Schema({
   email: { type: String, required: [true, 'we need to kwon who you are'] },
   createdAt: { type: Date },
   updatedAt: { type: Date },
+  password: { type: String },
 });
 
 export const User = mongoose.model('User', UserSchema, 'users');
