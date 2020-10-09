@@ -1,12 +1,10 @@
 import { db } from '../app.js';
-export const validateAndSaveIncommingData = async (model, modelName) => {
-  if (!model.validateSync()) {
-    const response = await model.save();
-    console.log(`${modelName} with datas: ${model} saved`);
-    return response;
-  } else {
-    console.log('shit');
-    return `Invalid format for ${modelName}`;
+import { User } from '../models/user.js';
+export const validateIncommingData = async (data, modelName) => {
+  const user = new User(data);
+  const invalidError = user.validateSync();
+  if (invalidError) {
+    return { status: 403, msgError: { success: false, msg: `Invalid format for ${modelName}` } };
   }
 };
 
@@ -25,16 +23,23 @@ export const validateAndUpdateNewData = async (
     );
     return response;
   } else {
-    return `Invalid format for ${modelName}`;
+    return { status: 403, msgError: { success: false, msg: `Invalid format for ${modelName}` } };
   }
 };
 
-export const findOne = async (collectionName, userUuid) => {
+export const findAll = async (collectionName) => {
+  const response = await db
+    .collection(collectionName)
+    .find({}).toArray();
+  return response;
+};
+
+export const findByUuid = async (collectionName, userUuid) => {
   const response = await db
     .collection(collectionName)
     .findOne({ uuid: userUuid });
   if (!response) {
-    res.status(404).send('ressource not found');
+    return ({ status: 404, msgError: { success: false, msg: "ressource not found" } })
   }
   return response;
 };
